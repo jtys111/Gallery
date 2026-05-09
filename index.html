@@ -1,83 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Petworth House · Gallery Tour</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --cream: #f5f0e8; --parchment: #e8dfc8; --oak: #6b4c2a; --dark: #1a1208;
-  --gold: #c9a84c; --gold-light: #e8c96a; --ink: #2c1f0e;
-  --panel-bg: rgba(26, 18, 8, 0.95); --panel-border: rgba(201, 168, 76, 0.6);
-}
-body { background: var(--dark); color: var(--cream); font-family: 'Cormorant Garamond', Georgia, serif; min-height: 100vh; overflow-x: hidden; }
-.screen { display: none; }
-.screen.active { display: block; }
-header { text-align: center; padding: 3rem 2rem 2rem; background: linear-gradient(to bottom, #0d0a04, var(--dark)); border-bottom: 1px solid rgba(201,168,76,0.25); }
-header::before { content: ''; display: block; width: 80px; height: 1px; background: var(--gold); margin: 0 auto 1.2rem; opacity: 0.7; }
-.property-name { font-family: 'Playfair Display', serif; font-size: clamp(1rem, 2.5vw, 1.3rem); letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); font-weight: 400; margin-bottom: 0.5rem; }
-h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; color: var(--cream); line-height: 1.1; margin-bottom: 1rem; }
-.subtitle { font-size: 1.1rem; color: rgba(245,240,232,0.55); font-style: italic; font-weight: 300; letter-spacing: 0.05em; }
-.lobby { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem 5rem; }
-.rooms-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; }
-.room-card { position: relative; cursor: pointer; border: 1px solid rgba(201,168,76,0.25); background: rgba(255,255,255,0.02); padding: 2rem 1.8rem 1.6rem; transition: all 0.3s; overflow: hidden; }
-.room-card:hover { border-color: rgba(201,168,76,0.6); background: rgba(201,168,76,0.04); transform: translateY(-4px); }
-/* Fixed Preview Image Styling */
-.room-card-preview { width: 100%; height: 120px; margin-bottom: 1.3rem; opacity: 0.8; object-fit: cover; display: block; border: 1px solid rgba(201,168,76,0.2); }
-.room-card-name { font-family: 'Playfair Display', serif; font-size: 1.35rem; color: var(--cream); margin-bottom: 0.5rem; }
-.room-header { text-align: center; padding: 2.5rem 2rem 2rem; background: linear-gradient(to bottom, #0d0a04, var(--dark)); border-bottom: 1px solid rgba(201,168,76,0.2); position: relative; }
-.back-btn { position: absolute; left: 2rem; top: 50%; transform: translateY(-50%); background: none; border: 1px solid rgba(201,168,76,0.4); color: var(--gold); padding: 0.5rem 1rem; cursor: pointer; text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.8rem; }
-.wall-container { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem 5rem; }
-.section-label { font-family: 'Playfair Display', serif; font-size: 0.75rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 2rem; display: flex; align-items: center; gap: 1rem; }
-.section-label::after { content: ''; flex: 1; height: 1px; background: rgba(201,168,76,0.2); }
-.wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 3rem 2.5rem; margin-bottom: 4rem; }
-.frame { padding: 12px; background: linear-gradient(135deg, #8B6914 0%, #c9a84c 25%, #6b4c2a 50%, #c9a84c 75%, #8B6914 100%); box-shadow: 0 8px 30px rgba(0,0,0,0.8); }
-/* Frame Image Styling */
-.frame img { width: 100%; height: 220px; object-fit: cover; display: block; }
-.tooltip { position: fixed; z-index: 1000; width: 320px; background: var(--panel-bg); border: 1px solid var(--panel-border); padding: 1.5rem; pointer-events: none; opacity: 0; transition: all 0.2s; backdrop-filter: blur(12px); color: var(--cream); }
-.tooltip.visible { opacity: 1; }
-.footer-bar { border-top: 1px solid rgba(201,168,76,0.15); padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; background: #0d0a04; }
-.lang-btn { background: none; border: 1px solid rgba(201,168,76,0.25); color: rgba(245,240,232,0.45); padding: 0.25rem 0.65rem; cursor: pointer; margin-left: 5px; font-family: 'Cormorant Garamond'; }
-.lang-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.1); }
-.audio-card { border: 1px solid rgba(201,168,76,0.3); background: rgba(255,255,255,0.02); padding: 2rem; margin-bottom: 3rem; }
-.audio-btn { background: none; border: 1px solid var(--gold); color: var(--gold); padding: 0.4rem 0.8rem; cursor: pointer; text-transform: uppercase; margin-top: 0.8rem; font-size: 0.7rem; letter-spacing: 0.1em; transition: 0.2s; }
-.audio-btn:hover { background: rgba(201, 168, 76, 0.1); }
-.audio-btn.playing { background: var(--gold); color: var(--dark); }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petworth House · Gallery Tour</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --cream: #f5f0e8; --parchment: #e8dfc8; --oak: #6b4c2a; --dark: #1a1208;
+            --gold: #c9a84c; --gold-light: #e8c96a; --ink: #2c1f0e;
+            --panel-bg: rgba(26, 18, 8, 0.95); --panel-border: rgba(201, 168, 76, 0.6);
+        }
+        body { background: var(--dark); color: var(--cream); font-family: 'Cormorant Garamond', Georgia, serif; min-height: 100vh; overflow-x: hidden; }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        header { text-align: center; padding: 3rem 2rem 2rem; background: linear-gradient(to bottom, #0d0a04, var(--dark)); border-bottom: 1px solid rgba(201,168,76,0.25); }
+        header::before { content: ''; display: block; width: 80px; height: 1px; background: var(--gold); margin: 0 auto 1.2rem; opacity: 0.7; }
+        .property-name { font-family: 'Playfair Display', serif; font-size: clamp(1rem, 2.5vw, 1.3rem); letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); font-weight: 400; margin-bottom: 0.5rem; }
+        h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; color: var(--cream); line-height: 1.1; margin-bottom: 1rem; }
+        .subtitle { font-size: 1.1rem; color: rgba(245,240,232,0.55); font-style: italic; font-weight: 300; letter-spacing: 0.05em; }
+        .lobby { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+        .rooms-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; }
+        .room-card { position: relative; cursor: pointer; border: 1px solid rgba(201,168,76,0.25); background: rgba(255,255,255,0.02); padding: 2rem 1.8rem 1.6rem; transition: all 0.3s; overflow: hidden; }
+        .room-card:hover { border-color: rgba(201,168,76,0.6); background: rgba(201,168,76,0.04); transform: translateY(-4px); }
+        .room-card-preview { width: 100%; height: 120px; margin-bottom: 1.3rem; opacity: 0.8; object-fit: cover; display: block; border: 1px solid rgba(201,168,76,0.2); }
+        .room-card-name { font-family: 'Playfair Display', serif; font-size: 1.35rem; color: var(--cream); margin-bottom: 0.5rem; }
+        .room-header { text-align: center; padding: 2.5rem 2rem 2rem; background: linear-gradient(to bottom, #0d0a04, var(--dark)); border-bottom: 1px solid rgba(201,168,76,0.2); position: relative; }
+        .back-btn { position: absolute; left: 2rem; top: 50%; transform: translateY(-50%); background: none; border: 1px solid rgba(201,168,76,0.4); color: var(--gold); padding: 0.5rem 1rem; cursor: pointer; text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.8rem; }
+        .wall-container { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+        .section-label { font-family: 'Playfair Display', serif; font-size: 0.75rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 2rem; margin-top: 2rem; display: flex; align-items: center; gap: 1rem; }
+        .section-label::after { content: ''; flex: 1; height: 1px; background: rgba(201,168,76,0.2); }
+        .wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 3rem 2.5rem; margin-bottom: 4rem; }
+        .frame { padding: 12px; background: linear-gradient(135deg, #8B6914 0%, #c9a84c 25%, #6b4c2a 50%, #c9a84c 75%, #8B6914 100%); box-shadow: 0 8px 30px rgba(0,0,0,0.8); cursor: help; }
+        .frame img { width: 100%; height: 220px; object-fit: cover; display: block; }
+        .tooltip { position: fixed; z-index: 1000; width: 320px; background: var(--panel-bg); border: 1px solid var(--panel-border); padding: 1.5rem; pointer-events: none; opacity: 0; transition: all 0.2s; backdrop-filter: blur(12px); color: var(--cream); }
+        .tooltip.visible { opacity: 1; }
+        .footer-bar { border-top: 1px solid rgba(201,168,76,0.15); padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; background: #0d0a04; }
+        .lang-btn { background: none; border: 1px solid rgba(201,168,76,0.25); color: rgba(245,240,232,0.45); padding: 0.25rem 0.65rem; cursor: pointer; margin-left: 5px; font-family: 'Cormorant Garamond'; }
+        .lang-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.1); }
+    </style>
 </head>
 <body>
 
 <div id="screen-lobby" class="screen active">
-  <header>
-    <p class="property-name" data-i18n="property"></p>
-    <h1 data-i18n="title"></h1>
-    <p class="subtitle" data-i18n="subtitle"></p>
-  </header>
-  <main class="lobby">
-    <div class="rooms-grid" id="rooms-grid"></div>
-  </main>
+    <header>
+        <p class="property-name" data-i18n="property"></p>
+        <h1 data-i18n="title"></h1>
+        <p class="subtitle" data-i18n="subtitle"></p>
+    </header>
+    <main class="lobby">
+        <div class="rooms-grid" id="rooms-grid"></div>
+    </main>
 </div>
 
 <div id="screen-room" class="screen">
-  <header class="room-header">
-    <button class="back-btn" onclick="goToLobby()" data-i18n="backBtn"></button>
-    <h1 class="room-header-title" id="room-header-title"></h1>
-  </header>
-  <div class="wall-container" id="wall-container"></div>
+    <header class="room-header">
+        <button class="back-btn" onclick="goToLobby()" data-i18n="backBtn"></button>
+        <h1 class="room-header-title" id="room-header-title"></h1>
+    </header>
+    <div class="wall-container" id="wall-container"></div>
 </div>
 
 <div class="tooltip" id="tooltip">
-  <div id="tt-title" style="font-family:'Playfair Display'; font-size:1.2rem;"></div>
-  <div id="tt-artist" style="font-style:italic; margin-bottom:0.5rem;"></div>
-  <hr style="border:0; border-top:1px solid var(--gold); margin-bottom:0.5rem; opacity:0.3;">
-  <div id="tt-body" style="font-size:0.9rem; line-height:1.5;"></div>
+    <div id="tt-title" style="font-family:'Playfair Display'; font-size:1.2rem;"></div>
+    <div id="tt-artist" style="font-style:italic; margin-bottom:0.5rem;"></div>
+    <hr style="border:0; border-top:1px solid var(--gold); margin-bottom:0.5rem; opacity:0.3;">
+    <div id="tt-body" style="font-size:0.9rem; line-height:1.5;"></div>
 </div>
 
 <footer class="footer-bar">
-  <span style="font-size:0.7rem; color:gray;" data-i18n="footerCopy"></span>
-  <div id="lang-selectors"></div>
+    <span style="font-size:0.7rem; color:gray;" data-i18n="footerCopy"></span>
+    <div id="lang-selectors"></div>
 </footer>
 
 <script>
@@ -85,236 +79,272 @@ let currentLang = 'en';
 let currentRoomId = null;
 
 const i18n = {
-  en: { property: 'Petworth House · National Trust', title: 'The Collection', subtitle: 'Select a room to begin your tour', backBtn: '← All Rooms', enterRoom: 'Enter Room →', listenBtn: '▶ Listen', stopBtn: '■ Stop', footerCopy: 'Petworth House Tour' },
-  fr: { property: 'Petworth House · National Trust', title: 'La Collection', subtitle: 'Sélectionnez une salle', backBtn: '← Retour', enterRoom: 'Entrer →', listenBtn: '▶ Écouter', stopBtn: '■ Arrêter', footerCopy: 'Visite Petworth' },
-  de: { property: 'Petworth House', title: 'Die Sammlung', subtitle: 'Wählen Sie einen Raum', backBtn: '← Alle Räume', enterRoom: 'Eintreten →', listenBtn: '▶ Anhören', stopBtn: '■ Stopp', footerCopy: 'Petworth Tour' },
-  es: { property: 'Petworth House', title: 'La Colección', subtitle: 'Seleccione una sala', backBtn: '← Atrás', enterRoom: 'Entrar →', listenBtn: '▶ Escuchar', stopBtn: '■ Parar', footerCopy: 'Tour Petworth' },
-  it: { property: 'Petworth House', title: 'La Collezione', subtitle: 'Seleziona una sala', backBtn: '← Indietro', enterRoom: 'Entra →', listenBtn: '▶ Ascolta', stopBtn: '■ Ferma', footerCopy: 'Tour Petworth' },
-  zh: { property: 'Petworth House', title: '艺术收藏', subtitle: '选择一个展厅', backBtn: '← 返回', enterRoom: '进入 →', listenBtn: '▶ 聆听', stopBtn: '■ 停止', footerCopy: '互动画廊之旅' },
-  ja: { property: 'ペットワース・ハウス', title: 'コレクション', subtitle: '部屋を選んでください', backBtn: '← 戻る', enterRoom: '入る →', listenBtn: '▶ 聴く', stopBtn: '■ 停止', footerCopy: 'ギャラリーツアー' }
+    en: { property: 'Petworth House · National Trust', title: 'The Collection', subtitle: 'Select a room to begin your tour', backBtn: '← All Rooms', enterRoom: 'Enter Room →', footerCopy: 'Petworth House Tour' },
+    fr: { property: 'Petworth House · National Trust', title: 'La Collection', subtitle: 'Sélectionnez une salle', backBtn: '← Retour', enterRoom: 'Entrer →', footerCopy: 'Visite Petworth' },
+    de: { property: 'Petworth House', title: 'Die Sammlung', subtitle: 'Wählen Sie einen Raum', backBtn: '← Alle Räume', enterRoom: 'Eintreten →', footerCopy: 'Petworth Tour' },
+    es: { property: 'Petworth House', title: 'La Colección', subtitle: 'Seleccione una sala', backBtn: '← Atrás', enterRoom: 'Entrar →', footerCopy: 'Tour Petworth' },
+    it: { property: 'Petworth House', title: 'La Collezione', subtitle: 'Seleziona una sala', backBtn: '← Indietro', enterRoom: 'Entra →', footerCopy: 'Tour Petworth' },
+    zh: { property: 'Petworth House', title: '艺术收藏', subtitle: '选择一个展厅', backBtn: '← 返回', enterRoom: '进入 →', footerCopy: '互动画廊之旅' },
+    ja: { property: 'ペットワース・ハウス', title: 'コレクション', subtitle: '部屋を選んでください', backBtn: '← 戻る', enterRoom: '入る →', footerCopy: 'ギャラリーツアー' }
 };
 
 const ROOMS = [
   {
     id: 'marble-hall',
     name: { en: 'Marble Hall', fr: 'Galerie des Marbres', de: 'Marmorsaal', es: 'Salón de Mármol', it: 'Sala dei Marmi', zh: '大理石大厅', ja: 'マーブル・ホール' },
-    previewImg: 'https://picsum.photos/id/10/400/300',
+    previewImg: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/John_Constable_-_The_Hay_Wain_%281821%29.jpg',
     sections: [
       {
         type: 'paintings', artist: 'John Constable',
         works: [
-          { title: { en: 'Stonehenge', it: 'Stonehenge', fr: 'Stonehenge', es: 'Stonehenge', de: 'Stonehenge', zh: '巨石阵', ja: 'ストーンヘンジ' }, date: '1835', body: { en: 'A powerful depiction of the ancient monument.', it: 'Una potente rappresentazione dell\'antico monumento.', fr: 'Une représentation puissante du monument ancien.' }, img: 'https://picsum.photos/id/11/400/300' },
-          { title: { en: 'The Hay Wain', it: 'Il Carro da Fieno', fr: 'La Charrette de foin', es: 'La carreta de heno', de: 'Der Heuwagen', zh: '干草车', ja: '乾草の車' }, date: '1821', body: { en: 'An iconic English landscape.', it: 'Un iconico paesaggio inglese.', fr: 'Un paysage anglais emblématique.' }, img: 'https://picsum.photos/id/12/400/300' },
-          { title: { en: 'The Cornfield', it: 'Il Campo di Grano', fr: 'Le Champ de blé', es: 'El campo de maíz', de: 'Das Kornfeld', zh: '麦田', ja: 'コーンフィールド' }, date: '1826', body: { en: 'A view near East Bergholt.', it: 'Una vista vicino a East Bergholt.', fr: 'Une vue près d\'East Bergholt.' }, img: 'https://picsum.photos/id/13/400/300' }
+          { title: { en: 'Stonehenge' }, date: '1835', body: { en: 'A powerful depiction of the ancient monument.' }, img: 'https://i.guim.co.uk/img/media/34f6291ceb488a23c501b1fa3fc63c1cddab18a2/69_80_5015_3241/master/5015.jpg?width=620&dpr=2&s=none&crop=none' },
+          { title: { en: 'The Hay Wain' }, date: '1821', body: { en: 'An iconic English landscape.' }, img: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/John_Constable_-_The_Hay_Wain_%281821%29.jpg' },
+          { title: { en: 'The Cornfield' }, date: '1826', body: { en: 'A view near East Bergholt.' }, img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Constable_-_The_Cornfield.jpg/960px-Constable_-_The_Cornfield.jpg' }
         ]
       },
       {
         type: 'paintings', artist: 'J.M.W Turner',
         works: [
-          { title: { en: 'The Shipwreck', it: 'Il Naufragio', fr: 'Le Naufrage', es: 'El naufragio', de: 'Der Schiffbruch', zh: '海难', ja: '難破船' }, date: '1805', body: { en: 'Mastery of maritime drama.', it: 'Maestria del dramma marittimo.', fr: 'Maîtrise du drame maritime.' }, img: 'https://picsum.photos/id/14/400/300' },
-          { title: { en: 'Rain, Steam and Speed', it: 'Pioggia, Vapore e Velocità', fr: 'Pluie, vapeur et vitesse', es: 'Lluvia, vapor y velocidad', de: 'Regen, Dampf und Geschwindigkeit', zh: '雨，蒸汽和速度', ja: '雨、蒸気、速度' }, date: '1844', body: { en: 'The Great Western Railway.', it: 'La Great Western Railway.', fr: 'Le chemin de fer.' }, img: 'https://picsum.photos/id/15/400/300' },
-          { title: { en: 'Snow Storm', it: 'Tempesta di Neve', fr: 'Tempête de neige', es: 'Tormenta de nieve', de: 'Schneesturm', zh: '暴风雪', ja: '雪嵐' }, date: '1842', body: { en: 'Steamboat off a Harbour\'s Mouth.', it: 'Battello a vapore all\'imboccatura di un porto.', fr: 'Bateau à vapeur.' }, img: 'https://picsum.photos/id/16/400/300' }
+          { title: { en: 'Self Portrait' }, date: '1799', body: { en: 'The artist as a young man.' }, img: 'https://uploads1.wikiart.org/images/william-turner/self-portrait-1.jpg!Large.jpg' },
+          { title: { en: 'The Shipwreck' }, date: '1805', body: { en: 'Mastery of maritime drama.' }, img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Joseph_Mallord_William_Turner_-_The_Shipwreck_-_Google_Art_Project.jpg/960px-Joseph_Mallord_William_Turner_-_The_Shipwreck_-_Google_Art_Project.jpg' },
+          { title: { en: 'Rain, Steam and Speed' }, date: '1844', body: { en: 'The Great Western Railway.' }, img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Turner_-_Rain%2C_Steam_and_Speed_-_National_Gallery_file.jpg/960px-Turner_-_Rain%2C_Steam_and_Speed_-_National_Gallery_file.jpg' },
+          { title: { en: 'Snow Storm' }, date: '1842', body: { en: 'Steamboat off a Harbours Mouth.' }, img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Joseph_Mallord_William_Turner_-_Snow_Storm_-_Steam-Boat_off_a_Harbour%27s_Mouth_-_WGA23178.jpg/960px-Joseph_Mallord_William_Turner_-_Snow_Storm_-_Steam-Boat_off_a_Harbour%27s_Mouth_-_WGA23178.jpg' }
         ]
       },
       {
         type: 'paintings', artist: 'Caspar David Friedrich',
         works: [
-          { title: { en: 'Wanderer above the Sea of Fog', it: 'Viandante sul Mare di Nebbia', fr: 'Le Voyageur contemplant une mer de nuages', es: 'El caminante sobre el mar de nubes', de: 'Der Wanderer über dem Nebelmeer', zh: '雾海上的漫游者', ja: '雲海の上の旅人' }, date: '1818', body: { en: 'The pinnacle of Romanticism.', it: 'Il culmine del Romanticismo.', fr: 'Romantisme.' }, img: 'https://picsum.photos/id/17/400/300' },
-          { title: { en: 'The Abbey in the Oakwood', it: 'L\'Abbazia nel Querceto', fr: 'L\'Abbaye dans une forêt de chênes', es: 'Abadía en el robledal', de: 'Abtei im Eichwald', zh: '橡树林中的修道院', ja: 'オークの森の修道院' }, date: '1809', body: { en: 'A haunting cemetery scene.', it: 'Una inquietante scena di cimitero.', fr: 'Scène de cimetière.' }, img: 'https://picsum.photos/id/18/400/300' }
+          { title: { en: 'The Abbey in the Oakwood' }, date: '1809', body: { en: 'A haunting cemetery scene.' }, img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Caspar_David_Friedrich_-_Abtei_im_Eichwald_-_Google_Art_Project.jpg/960px-Caspar_David_Friedrich_-_Abtei_im_Eichwald_-_Google_Art_Project.jpg' },
+          { title: { en: 'Wanderer above the Sea of Fog' }, date: '1818', body: { en: 'The pinnacle of Romanticism.' }, img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Caspar_David_Friedrich_-_Wanderer_above_the_Sea_of_Fog.jpeg/960px-Caspar_David_Friedrich_-_Wanderer_above_the_Sea_of_Fog.jpeg' }
         ]
-      },
-      { type: 'audio', title: { en: 'I Wandered Lonely as a Cloud', it: 'Vagavo Solitario come una Nuvola', fr: 'Je vagabondais seul come un nuage' }, author: 'Wordsworth', audioText: { en: 'I wandered lonely as a cloud that floats on high o\'er vales and hills.', it: 'Vagavo solitario come una nuvola che fluttua in alto sopra valli e colline.' }, excerpt: { en: 'I wandered lonely...', it: 'Vagavo solitario...' } },
-      { type: 'audio', title: { en: 'The Tyger', it: 'The Tyger (La Tigre)', fr: 'Le Tigre' }, author: 'Blake', audioText: { en: 'Tyger Tyger, burning bright, In the forests of the night.', it: 'Tigre! Tigre! Divampante splendore, Nelle foreste della notte.' }, excerpt: { en: 'Tyger Tyger...', it: 'Tigre! Tigre!...' } }
+      }
     ]
   },
   {
     id: 'beauty-room',
-    name: { en: 'Beauty Room', fr: 'Chambre de Beauté', es: 'Sala de Belleza', de: 'Schönheitszimmer', it: 'Sala della Bellezza', zh: '美展厅', ja: 'ビューティー・ルーム' },
-    previewImg: 'https://picsum.photos/id/19/400/300',
+    name: { en: 'Beauty Room', fr: 'Salle de Beauté', de: 'Schönheitsraum', es: 'Sala de la Belleza', it: 'Sala della Bellezza', zh: '美人室', ja: 'ビューティー・ルーム' },
+    previewImg: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTUcaazH4rZtSQzvrvxKw0_kAgiYbmMex9hclOLUvYlbb_o3w',
     sections: [
       {
         type: 'paintings', artist: 'Claude Monet',
         works: [
-          { title: { en: 'Impression, Sunrise', it: 'Impressione, Levar del Sole', fr: 'Impression, soleil levant', es: 'Impresión, sol naciente', de: 'Impression, Sonnenaufgang', zh: '日出·印象', ja: '印象・日の出' }, date: '1872', body: { en: 'The dawn of a new movement.', it: 'L\'alba di un nuovo movimento.', fr: 'Nouveau mouvement.' }, img: 'https://picsum.photos/id/20/400/300' },
-          { title: { en: 'Cliff Walk at Pourville', it: 'Passeggiata sulla Scogliera a Pourville', fr: 'Promenade sur la falaise à Pourville', es: 'Paseo por el acantilado en Pourville', de: 'Klippenwanderung bei Pourville', zh: '普尔维尔断崖散步', ja: 'プルヴィルの断崖の散歩' }, date: '1882', body: { en: 'Luminous coastal light.', it: 'Luce costiera luminosa.', fr: 'Lumière côtière.' }, img: 'https://picsum.photos/id/21/400/300' }
+          { title: { en: 'Self Portrait' }, date: '1886', body: { en: 'Monet with a beret.' }, img: 'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcTbmdcjVdQ6rwEAWS5Fbar7Epw_HsFJXwx33Ja8PcZSpKBkRA' },
+          { title: { en: 'Impressions, Sunrise' }, date: '1872', body: { en: 'The dawn of a new movement.' }, img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTUcaazH4rZtSQzvrvxKw0_kAgiYbmMex9hclOLUvYlbb_o3w' },
+          { title: { en: 'The Cliff Walk at Pourville' }, date: '1882', body: { en: 'Luminous coastal light.' }, img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcS5P1aDtpgD6Eo-nN9ULHaXanYqUpA_bLdf1V2pIWQvFVAKXg' }
         ]
       },
       {
         type: 'paintings', artist: 'Berthe Morisot',
         works: [
-          { title: { en: 'Summer\'s Day', it: 'Giorno d\'Estate', fr: 'Jour d\'été', es: 'Día de verano', de: 'Sommertag', zh: '夏日', ja: '夏の日' }, date: '1879', body: { en: 'Two women in a boat.', it: 'Due donne in barca.', fr: 'Sur le bateau.' }, img: 'https://picsum.photos/id/22/400/300' },
-          { title: { en: 'Hanging the Laundry', it: 'Il Bucato Steso', fr: 'Le Linge qui sèche', es: 'Colgando la colada', de: 'Wäsche aufhängen', zh: '晒衣服', ja: '洗濯物を干す' }, date: '1875', body: { en: 'Capturing domestic life.', it: 'Catturando la vita domestica.', fr: 'Vie domestique.' }, img: 'https://picsum.photos/id/23/400/300' }
+          { title: { en: 'Self Portrait' }, date: '1885', body: { en: 'Portrait of the artist.' }, img: 'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcRC6-XZIrsvT_oZBfQdkGIKssfj03R2xKXaY0idybEdJ-zlvQ' },
+          { title: { en: 'Summers Day' }, date: '1879', body: { en: 'Two women in a boat.' }, img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSW0hD66KIALi7c3yFMkn7x6JKHvoB90iJlPzLmtPHOzGMmyQ' },
+          { title: { en: 'Hanging Laundry' }, date: '1875', body: { en: 'Capturing domestic life.' }, img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQFHJpHjushuCW9XeADuGbIoeYICVWM89MBZ4S0QhykBndqLg' }
         ]
       }
     ]
   },
   {
     id: 'little-dining-room',
-    name: { en: 'Little Dining Room', fr: 'Petite Salle à Manger', es: 'Comedor Pequeño', de: 'Kleiner Speisesaal', it: 'Piccola Sala da Pranzo', zh: '小餐厅', ja: '小ダイニングルーム' },
-    previewImg: 'https://picsum.photos/id/24/400/300',
+    name: { en: 'Little Dining Room', fr: 'Petite Salle à Manger', de: 'Kleines Speisezimmer', es: 'Comedor Pequeño', it: 'Piccola Sala da Pranzo', zh: '小餐厅', ja: '小さなダイニングルーム' },
+    previewImg: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTLsW8EjWFYuZnyIAdA-y-rgSjEGTz15-ICkIPcnjubcWJQ6g',
     sections: [
       {
-        type: 'paintings', artist: 'Vincent van Gogh',
+        type: 'paintings', artist: 'Van Gogh',
         works: [
-          { title: { en: 'Starry Night', it: 'Notte Stellata', fr: 'La Nuit étoilée', es: 'La noche estrellada', de: 'Sternennacht', zh: '星夜', ja: '星月夜' }, date: '1889', body: { en: 'The view from Saint-Rémy-de-Provence.', it: 'La vista da Saint-Rémy-de-Provence.', fr: 'Ciel de Saint-Rémy.' }, img: 'https://picsum.photos/id/25/400/300' },
-          { title: { en: 'Landscape with Wheat Sheaves', it: 'Paesaggio con Covoni di Grano', fr: 'Paysage avec meules de blé', es: 'Paisaje con gavillas de trigo', de: 'Landschaft mit Weizengarben', zh: '麦捆景观', ja: '麦わらのある風景' }, date: '1889', body: { en: 'Golden harvest textures.', it: 'Trame del raccolto dorato.', fr: 'Moisson dorée.' }, img: 'https://picsum.photos/id/26/400/300' }
+          { title: { en: 'Self Portrait with Bandaged Ear' }, date: '1889', body: { en: 'Iconic self-reflection.' }, img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQ2KTkB3D_b9c6usAgxTDPzFFuYOwZBnd7qEVuTKbHJa2iGkQ' },
+          { title: { en: 'Starry Night' }, date: '1889', body: { en: 'The view from Saint-Remy.' }, img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTLsW8EjWFYuZnyIAdA-y-rgSjEGTz15-ICkIPcnjubcWJQ6g' },
+          { title: { en: 'Landscape with Wheat' }, date: '1889', body: { en: 'Golden harvest textures.' }, img: 'https://krollermuller.nl/media/cache/collection_item_detail_small/media/collectionitempage/tmsImage/landschap-met-korenschelven-en-opkomende-maan-vincent-van-gogh-44550-copyright-kroller-muller-museum.jpg?500909865b6e' }
         ]
       },
       {
         type: 'paintings', artist: 'Piet Mondrian',
         works: [
-          { title: { en: 'Row of Eleven Poplars', it: 'Fila di Undici Pioppi', fr: 'Rangée de onze peupliers', es: 'Fila de once álamos', de: 'Reihe von elf Pappeln', zh: '十一棵杨树', ja: '11本のポプラ' }, date: '1908', body: { en: 'Early experiment with color.', it: 'Primo esperimento con il colore.', fr: 'Couleurs précoces.' }, img: 'https://picsum.photos/id/27/400/300' },
-          { title: { en: 'Wood with Beech Trees', it: 'Bosco con Faggi', fr: 'Bois de hêtres', es: 'Bosque de hayas', de: 'Buchenwald', zh: '山毛榉树林', ja: 'ブナの木の森' }, date: '1888', body: { en: 'An early naturalistic study.', it: 'Uno dei primi studi naturalistici.', fr: 'Étude naturaliste.' }, img: 'https://picsum.photos/id/28/400/300' }
+          { title: { en: 'Self Portrait' }, date: '1918', body: { en: 'The artist looking forward.' }, img: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSABlZSE_QxsIfp8Jg0mPlSb60_Z0J8VnruXzjon_7jf4j-Lw' },
+          { title: { en: 'Wood with Beech Trees' }, date: '1888', body: { en: 'An early naturalistic study.' }, img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSxWyF6UlMkJV_pKCzmC6oVkpzhmW0bG6g54yEoxQQwtObgWQ' },
+          { title: { en: 'Row of 11 Poplars' }, date: '1908', body: { en: 'Early experiment with color.' }, img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQ9VCcqub4RrkmhmsWb0cYEeluueBuyZG7E3ajDcMtrD4DyWg' }
         ]
       }
     ]
   },
   {
     id: 'red-room',
-    name: { en: 'Red Room', fr: 'Salon Rouge', es: 'Sala Roja', de: 'Roter Salon', it: 'Sala Rossa', zh: '红展厅', ja: 'レッド・ルーム' },
-    previewImg: 'https://picsum.photos/id/29/400/300',
+    name: { en: 'Red Room', fr: 'Chambre Rouge', de: 'Rotes Zimmer', es: 'Habitación Roja', it: 'Camera Rossa', zh: '红室', ja: 'レッド・ルーム' },
+    previewImg: 'https://static.dezeen.com/uploads/2021/09/arc-de-triomphe-wrapped-christo-and-jeanne-claude_dezeen_2364_sq2.jpg',
     sections: [
       {
-        type: 'paintings', artist: 'Christo and Jean-Claude',
+        type: 'paintings', artist: 'Christo and Jean Claude',
         works: [
-          { title: { en: 'Wrapped Trees', it: 'Alberi Impacchettati', fr: 'Arbres emballés', es: 'Árboles envueltos', de: 'Verhüllte Bäume', zh: '被包裹的树', ja: '包まれた木々' }, date: '1998', body: { en: 'A transformation of the landscape.', it: 'Una trasformazione del paesaggio.', fr: 'Art paysager.' }, img: 'https://picsum.photos/id/30/400/300' },
-          { title: { en: 'Umbrellas', it: 'Ombrelli (The Umbrellas)', fr: 'Les Parapluies', es: 'Sombrillas', de: 'Die Schirme', zh: '伞', ja: 'アンブレラ' }, date: '1991', body: { en: 'Joint project in USA and Japan.', it: 'Progetto congiunto in USA e Giappone.', fr: 'Projet conjoint.' }, img: 'https://picsum.photos/id/31/400/300' }
+          { title: { en: 'Arc de Triomphe Wrapped' }, date: '2021', body: { en: 'A temporary installation in Paris.' }, img: 'https://static.dezeen.com/uploads/2021/09/arc-de-triomphe-wrapped-christo-and-jeanne-claude_dezeen_2364_sq2.jpg' },
+          { title: { en: 'Wrapped Trees' }, date: '1998', body: { en: 'Transformation of the landscape.' }, img: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcTLxhHW1vVIHX-p2cX6HY0649rqg0oRBqyTwFPr31cEu34Mvw' },
+          { title: { en: 'Umbrellas' }, date: '1991', body: { en: 'Joint project in USA and Japan.' }, img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQUKeDqKO6htWUjES9d0DFeeD81AMJ90ejD2E6vocBZZg2U4Q' }
         ]
       },
       {
         type: 'paintings', artist: 'Gerhard Richter',
         works: [
-          { title: { en: 'Seascape Series', it: 'Serie di Marine', fr: 'Série de Marines', es: 'Serie de paisajes marinos', de: 'Seestücke', zh: '海景系列', ja: 'シースケープ' }, date: '1998', body: { en: 'Photorealistic ocean studies.', it: 'Studi oceanici fotorealistici.', fr: 'Études de l\'océan.' }, img: 'https://picsum.photos/id/32/400/300' }
+          { title: { en: 'Self Portrait' }, date: '2017', body: { en: 'The artist in Prague.' }, img: 'https://upload.wikimedia.org/wikipedia/commons/7/7f/Gerhard_Richter%2C_Prague_%282017%29.jpg' },
+          { title: { en: 'Betty' }, date: '1988', body: { en: 'Photorealistic portrait.' }, img: 'https://www.guggenheim.org/wp-content/uploads/1998/01/GBM2001.3_ph_web-1.jpg' },
+          { title: { en: 'Seascape' }, date: '1998', body: { en: 'Atmospheric ocean study.' }, img: 'https://cdn.mos.cms.futurecdn.net/w7GDdWgRkKQdpiXBEqJ6Md-1800-80.jpg.webp' }
         ]
       }
     ]
   },
   {
     id: 'north-gallery',
-    name: { en: 'North Gallery', fr: 'Galerie Nord', es: 'Galería Norte', de: 'Nordgalerie', it: 'Galleria Nord', zh: '北画廊', ja: '北のギャラリー' },
-    previewImg: 'https://picsum.photos/id/33/400/300',
+    name: { en: 'North Gallery', fr: 'Galerie Nord', de: 'Nordgalerie', es: 'Galería Norte', it: 'Galleria Nord', zh: '北画廊', ja: 'ノース・ギャラリー' },
+    previewImg: 'https://www.andreasgursky.com/media/pages/works/1993/aletschgletscher/15b3aec03d-1762789695/1993_aletschgletscher-1800x1800-q75.jpg',
     sections: [
-      {
-        type: 'paintings', artist: 'Andreas Gursky',
-        works: [
-          { title: { en: 'Aletsch Glacier 1', it: 'Ghiacciaio dell\'Aletsch 1', fr: 'Glacier d\'Aletsch 1', es: 'Glaciar Aletsch 1', de: 'Aletschgletscher 1', zh: '阿莱奇冰川 1', ja: 'アレッチ氷河 1' }, date: '1993', body: { en: 'Stark mountain photography.', it: 'Cruda fotografia di montagna.', fr: 'Échelle massive.' }, img: 'https://picsum.photos/id/34/400/300' },
-          { title: { en: 'Aletsch Glacier 2', it: 'Ghiacciaio dell\'Aletsch 2', fr: 'Glacier d\'Aletsch 2', es: 'Glaciar Aletsch 2', de: 'Aletschgletscher 2', zh: '阿莱奇冰川 2', ja: 'アレッチ氷河 2' }, date: '1993', body: { en: 'Massive scale and detail.', it: 'Scala e dettaglio massicci.', fr: 'Détail glaciaire.' }, img: 'https://picsum.photos/id/35/400/300' }
-        ]
-      },
       {
         type: 'paintings', artist: 'Olafur Eliasson',
         works: [
-          { title: { en: 'The Weather Project', it: 'The Weather Project', fr: 'Le Projet Météo', es: 'El proyecto del clima', de: 'Das Wetterprojekt', zh: '天气项目', ja: 'ウェザー・プロジェクト' }, date: '2003', body: { en: 'Artificial sun in the Turbine Hall.', it: 'Sole artificiale nella Turbine Hall.', fr: 'Soleil artificiel.' }, img: 'https://picsum.photos/id/36/400/300' },
-          { title: { en: 'Ice Watch', it: 'Ice Watch', fr: 'Montre de Glace', es: 'Reloj de hielo', de: 'Eisuhr', zh: '冰表', ja: 'アイス・ウォッチ' }, date: '2014', body: { en: 'Melting glacial ice blocks.', it: 'Blocchi di ghiaccio glaciale che si sciolgono.', fr: 'Glace fondante.' }, img: 'https://picsum.photos/id/37/400/300' }
+          { title: { en: 'Self Portrait' }, date: '2017', body: { en: 'The artist.' }, img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/%C3%93lafur_El%C3%ADasson_Internationale_Jury_Berlinale_2017_%28cropped%29.jpg/1280px-%C3%93lafur_El%C3%ADasson_Internationale_Jury_Berlinale_2017_%28cropped%29.jpg' },
+          { title: { en: 'Ice Watch' }, date: '2014', body: { en: 'Melting glacial ice blocks.' }, img: 'https://res.cloudinary.com/olafureliasson-net/image/private/q_auto:eco,c_fit,h_1920,w_1920/img/ice-watch_12842.webp' },
+          { title: { en: 'The Weather Project' }, date: '2003', body: { en: 'Artificial sun in the Turbine Hall.' }, img: 'https://res.cloudinary.com/olafureliasson-net/image/private/q_auto:eco,c_fit,h_1920,w_1920/img/the-weather-project_21881.webp' }
+        ]
+      },
+      {
+        type: 'paintings', artist: 'Andreas Gursky',
+        works: [
+          { title: { en: 'Self Portrait' }, date: '2022', body: { en: 'The artist.' }, img: 'https://i.guim.co.uk/img/media/ca2838884bed2a9fa5df5bd4d7781b29c513601a/0_0_2683_3351/master/2683.jpg?width=700&quality=85&auto=format&fit=max&s=db3f9a607319842babead94b7a0d6e90' },
+          { title: { en: 'Aletsch Glacier I' }, date: '1993', body: { en: 'Massive scale photography.' }, img: 'https://www.andreasgursky.com/media/pages/works/1993/aletschgletscher/15b3aec03d-1762789695/1993_aletschgletscher-1800x1800-q75.jpg' },
+          { title: { en: 'Aletsch Glacier II' }, date: '2023', body: { en: 'Glacial landscape study.' }, img: 'https://www.andreasgursky.com/media/pages/works/2023/aletsch-glacier-ii/fbeb429eda-1762792440/2023_aletschgletscher_ii-1800x1800-q75.jpg' }
         ]
       }
     ]
   },
   {
     id: 'pleasure-garden',
-    name: { en: 'Pleasure Garden', fr: 'Jardin d\'Agrément', es: 'Jardín de recreo', de: 'Lustgarten', it: 'Giardino di Piacere', zh: '游乐园', ja: 'プレジャー・ガーデン' },
-    previewImg: 'https://picsum.photos/id/38/400/300',
+    name: { en: 'Pleasure Garden', fr: 'Jardin d’Agrément', de: 'Lustgarten', es: 'Jardín de Placer', it: 'Giardino del Piacere', zh: '游乐园', ja: 'プレジャー・ガーデン' },
+    previewImg: 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Monet_-_Monets_Garten_in_Giverny.jpg',
     sections: [
       {
         type: 'paintings', artist: 'Claude Monet',
         works: [
-          { title: { en: 'The Artist\'s Garden at Giverny', it: 'Il Giardino dell\'Artista a Giverny', fr: 'Le Jardin de l\'artiste à Giverny', es: 'El jardín del artista en Giverny', de: 'Der Garten des Künstlers in Giverny', zh: '吉维尼的小花园', ja: 'ジヴェルニーの庭' }, date: '1900', body: { en: 'Floral explosion of purple.', it: 'Esplosione floreale di viola.', fr: 'Explosion florale.' }, img: 'https://picsum.photos/id/39/400/300' },
-          { title: { en: 'Pathway in Monet\'s Garden', it: 'Sentiero nel Giardino di Monet', fr: 'Allée du jardin de Monet', es: 'Sendero en el jardín de Monet', de: 'Weg im Garten von Monet', zh: '莫奈花园的小道', ja: 'モネの庭o小道' }, date: '1902', body: { en: 'Dappled light on a garden path.', it: 'Luce screziata su un sentiero di giardino.', fr: 'Lumière tachetée.' }, img: 'https://picsum.photos/id/40/400/300' },
-          { title: { en: 'Water Lily Pond', it: 'Lo Stagno delle Ninfee', fr: 'Le Bassin aux nymphéas', es: 'El estanque de los lirios', de: 'Der Seerosenteich', zh: '睡莲池', ja: '睡蓮の池' }, date: '1899', body: { en: 'The famous Japanese bridge.', it: 'Il famoso ponte giapponese.', fr: 'Pont japonais.' }, img: 'https://picsum.photos/id/41/400/300' }
+          { title: { en: 'Monet\'s Garden at Giverny' }, date: '1900', body: { en: 'Floral explosion of purple.' }, img: 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Monet_-_Monets_Garten_in_Giverny.jpg' },
+          { title: { en: 'Pathway in Monets Garden' }, date: '1902', body: { en: 'Dappled light on a garden path.' }, img: 'https://uploads0.wikiart.org/00258/images/claude-monet/pathway-in-monets-garden-at-giverny-1901.jpeg!Large.jpeg' },
+          { title: { en: 'Water Lily Pond' }, date: '1899', body: { en: 'The famous Japanese bridge.' }, img: 'https://collectionapi.metmuseum.org/api/collection/v1/iiif/437127/2331256/restricted' }
         ]
       }
     ]
   }
 ];
 
-function t(key) { return i18n[currentLang][key] || i18n['en'][key]; }
-function getTxt(obj) { return typeof obj === 'object' ? (obj[currentLang] || obj['en']) : obj; }
-
-function applyTranslations() {
-  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.getAttribute('data-i18n')); });
-  const ls = document.getElementById('lang-selectors');
-  const langs = ['en', 'fr', 'de', 'es', 'it', 'zh', 'ja'];
-  ls.innerHTML = langs.map(l => `<button class="lang-btn ${l===currentLang?'active':''}" onclick="setLang('${l}')">${l.toUpperCase()}</button>`).join('');
+function init() {
+    renderLobby();
+    renderLangSelectors();
+    updateText();
+    setupTooltip();
 }
 
-function setLang(lang) {
-  currentLang = lang;
-  applyTranslations();
-  if (currentRoomId) enterRoom(currentRoomId); else renderLobby();
+function renderLangSelectors() {
+    const container = document.getElementById('lang-selectors');
+    container.innerHTML = '';
+    Object.keys(i18n).forEach(lang => {
+        const btn = document.createElement('button');
+        btn.className = `lang-btn ${lang === currentLang ? 'active' : ''}`;
+        btn.innerText = lang.toUpperCase();
+        btn.onclick = (e) => setLanguage(lang, e);
+        container.appendChild(btn);
+    });
+}
+
+function setLanguage(lang, event) {
+    currentLang = lang;
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    updateText();
+    renderLobby();
+    if (currentRoomId) renderRoom(currentRoomId);
+}
+
+function updateText() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        el.innerText = i18n[currentLang][key] || i18n['en'][key];
+    });
 }
 
 function renderLobby() {
-  const grid = document.getElementById('rooms-grid');
-  grid.innerHTML = ROOMS.map(r => `
-    <div class="room-card" onclick="enterRoom('${r.id}')">
-      <img src="${r.previewImg}" class="room-card-preview" alt="${getTxt(r.name)}">
-      <div class="room-card-name">${getTxt(r.name)}</div>
-      <div style="color:var(--gold); font-size:0.8rem; margin-top:0.5rem;">${t('enterRoom')}</div>
-    </div>`).join('');
+    const grid = document.getElementById('rooms-grid');
+    grid.innerHTML = '';
+    ROOMS.forEach(room => {
+        const card = document.createElement('div');
+        card.className = 'room-card';
+        card.onclick = () => renderRoom(room.id);
+        card.innerHTML = `
+            <img src="${room.previewImg}" class="room-card-preview" alt="">
+            <div class="room-card-name">${room.name[currentLang] || room.name['en']}</div>
+            <div style="font-size:0.8rem; color:var(--gold); opacity:0.8;">${i18n[currentLang].enterRoom}</div>
+        `;
+        grid.appendChild(card);
+    });
 }
 
-function enterRoom(id) {
-  currentRoomId = id;
-  const r = ROOMS.find(x => x.id === id);
-  document.getElementById('screen-lobby').classList.remove('active');
-  document.getElementById('screen-room').classList.add('active');
-  document.getElementById('room-header-title').textContent = getTxt(r.name);
-  
-  const cont = document.getElementById('wall-container');
-  cont.innerHTML = r.sections.map(s => {
-    if (s.type === 'audio') return `
-      <div class="audio-card">
-        <div style="font-family:'Playfair Display'; font-size:1.5rem;">${getTxt(s.title)}</div>
-        <div style="color:var(--gold); margin-bottom:1rem;">${s.author}</div>
-        <p style="font-style:italic; line-height:1.6; opacity:0.8;">${getTxt(s.excerpt)}</p>
-        <button class="audio-btn" onclick="toggleAudio(this, '${getTxt(s.audioText).replace(/'/g,"\\'")}')">${t('listenBtn')}</button>
-      </div>`;
-    return `
-      <div class="section-label">${s.artist}</div>
-      <div class="wall">${s.works.map(w => {
-        const speechText = (getTxt(w.title) + ". " + getTxt(w.body)).replace(/'/g,"\\'");
-        return `
-        <div class="painting-wrapper" onmouseenter="showTooltip(event, '${getTxt(w.title).replace(/'/g,"\\'")}', '${s.artist}', '${getTxt(w.body).replace(/'/g,"\\'")}')" onmouseleave="hideTooltip()">
-          <div class="frame" style="cursor:pointer;">
-             <img src="${w.img}" alt="${getTxt(w.title)}">
-          </div>
-          <div style="text-align:center; margin-top:0.8rem; font-size:0.9rem; letter-spacing:0.05em;">${getTxt(w.title)}</div>
-          <center><button class="audio-btn" onclick="toggleAudio(this, '${speechText}')">${t('listenBtn')}</button></center>
-        </div>`;
-      }).join('')}</div>`;
-  }).join('');
+function renderRoom(roomId) {
+    currentRoomId = roomId;
+    const room = ROOMS.find(r => r.id === roomId);
+    document.getElementById('screen-lobby').classList.remove('active');
+    document.getElementById('screen-room').classList.add('active');
+    document.getElementById('room-header-title').innerText = room.name[currentLang] || room.name['en'];
+    
+    const container = document.getElementById('wall-container');
+    container.innerHTML = '';
+
+    room.sections.forEach(section => {
+        const label = document.createElement('div');
+        label.className = 'section-label';
+        label.innerHTML = `<span>${section.artist}</span>`;
+        container.appendChild(label);
+
+        const wall = document.createElement('div');
+        wall.className = 'wall';
+        section.works.forEach(work => {
+            const item = document.createElement('div');
+            item.className = 'frame';
+            item.innerHTML = `<img src="${work.img}" alt="">`;
+            item.onmouseenter = (e) => showTooltip(e, work, section.artist);
+            item.onmouseleave = hideTooltip;
+            wall.appendChild(item);
+        });
+        container.appendChild(wall);
+    });
+    window.scrollTo(0,0);
 }
 
-function toggleAudio(btn, text) {
-  if (btn.classList.contains('playing')) { window.speechSynthesis.cancel(); btn.classList.remove('playing'); btn.textContent = t('listenBtn'); return; }
-  window.speechSynthesis.cancel();
-  document.querySelectorAll('.audio-btn').forEach(b => {
-    b.classList.remove('playing');
-    b.textContent = t('listenBtn');
-  });
-  const ut = new SpeechSynthesisUtterance(text);
-  const codes = { en: 'en-GB', fr: 'fr-FR', de: 'de-DE', es: 'es-ES', it: 'it-IT', zh: 'zh-CN', ja: 'ja-JP' };
-  ut.lang = codes[currentLang] || 'en-GB';
-  ut.onend = () => { btn.classList.remove('playing'); btn.textContent = t('listenBtn'); };
-  btn.classList.add('playing'); btn.textContent = t('stopBtn');
-  window.speechSynthesis.speak(ut);
+function goToLobby() {
+    currentRoomId = null;
+    document.getElementById('screen-room').classList.remove('active');
+    document.getElementById('screen-lobby').classList.add('active');
 }
 
-function goToLobby() { currentRoomId = null; window.speechSynthesis.cancel(); document.getElementById('screen-room').classList.remove('active'); document.getElementById('screen-lobby').classList.add('active'); }
-
-function showTooltip(e, t, a, b) {
-  const tt = document.getElementById('tooltip');
-  document.getElementById('tt-title').textContent = t;
-  document.getElementById('tt-artist').textContent = a;
-  document.getElementById('tt-body').textContent = b;
-  tt.classList.add('visible'); 
-  let x = e.clientX + 20; let y = e.clientY + 20;
-  if (x + 320 > window.innerWidth) x = e.clientX - 340;
-  tt.style.left = x + 'px'; tt.style.top = y + 'px';
+function setupTooltip() {
+    const tt = document.getElementById('tooltip');
+    document.addEventListener('mousemove', (e) => {
+        if (tt.classList.contains('visible')) {
+            const x = e.clientX + 20;
+            const y = e.clientY + 20;
+            const w = window.innerWidth;
+            tt.style.left = (x + 320 > w ? e.clientX - 340 : x) + 'px';
+            tt.style.top = y + 'px';
+        }
+    });
 }
-function hideTooltip() { document.getElementById('tooltip').classList.remove('visible'); }
 
-window.onload = () => { setLang('en'); };
+function showTooltip(e, work, artist) {
+    const tt = document.getElementById('tooltip');
+    document.getElementById('tt-title').innerText = work.title[currentLang] || work.title['en'];
+    document.getElementById('tt-artist').innerText = `${artist}, ${work.date}`;
+    document.getElementById('tt-body').innerText = work.body[currentLang] || work.body['en'];
+    tt.classList.add('visible');
+}
+
+function hideTooltip() {
+    document.getElementById('tooltip').classList.remove('visible');
+}
+
+init();
 </script>
+
 </body>
 </html>
+
