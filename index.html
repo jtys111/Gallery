@@ -28,6 +28,7 @@
         .room-card-name { font-family: 'Playfair Display', serif; font-size: 1.35rem; color: var(--cream); margin-bottom: 0.5rem; }
         .room-header { text-align: center; padding: 2.5rem 2rem 2rem; background: linear-gradient(to bottom, #0d0a04, var(--dark)); border-bottom: 1px solid rgba(201,168,76,0.2); position: relative; }
         .back-btn { position: absolute; left: 2rem; top: 50%; transform: translateY(-50%); background: none; border: 1px solid rgba(201,168,76,0.4); color: var(--gold); padding: 0.5rem 1rem; cursor: pointer; text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.8rem; }
+        .audio-btn { position: absolute; right: 2rem; top: 50%; transform: translateY(-50%); background: rgba(201,168,76,0.1); border: 1px solid var(--gold); color: var(--gold); padding: 0.5rem 1rem; cursor: pointer; text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.8rem; }
         .wall-container { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem 5rem; }
         .section-label { font-family: 'Playfair Display', serif; font-size: 0.75rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 2rem; margin-top: 2rem; display: flex; align-items: center; gap: 1rem; }
         .section-label::after { content: ''; flex: 1; height: 1px; background: rgba(201,168,76,0.2); }
@@ -58,6 +59,7 @@
     <header class="room-header">
         <button class="back-btn" onclick="goToLobby()" data-i18n="backBtn"></button>
         <h1 class="room-header-title" id="room-header-title"></h1>
+        <button class="audio-btn" id="audio-toggle" onclick="toggleNarration()" data-i18n="listenBtn"></button>
     </header>
     <div class="wall-container" id="wall-container"></div>
 </div>
@@ -77,15 +79,16 @@
 <script>
 let currentLang = 'en';
 let currentRoomId = null;
+let isNarrating = false;
 
 const i18n = {
-    en: { property: 'Petworth House · National Trust', title: 'The Collection', subtitle: 'Select a room to begin your tour', backBtn: '← All Rooms', enterRoom: 'Enter Room →', footerCopy: 'Petworth House Tour' },
-    fr: { property: 'Petworth House · National Trust', title: 'La Collection', subtitle: 'Sélectionnez une salle', backBtn: '← Retour', enterRoom: 'Entrer →', footerCopy: 'Visite Petworth' },
-    de: { property: 'Petworth House', title: 'Die Sammlung', subtitle: 'Wählen Sie einen Raum', backBtn: '← Alle Räume', enterRoom: 'Eintreten →', footerCopy: 'Petworth Tour' },
-    es: { property: 'Petworth House', title: 'La Colección', subtitle: 'Seleccione una sala', backBtn: '← Atrás', enterRoom: 'Entrar →', footerCopy: 'Tour Petworth' },
-    it: { property: 'Petworth House', title: 'La Collezione', subtitle: 'Seleziona una sala', backBtn: '← Indietro', enterRoom: 'Entra →', footerCopy: 'Tour Petworth' },
-    zh: { property: 'Petworth House', title: '艺术收藏', subtitle: '选择一个展厅', backBtn: '← 返回', enterRoom: '进入 →', footerCopy: '互动画廊之旅' },
-    ja: { property: 'ペットワース・ハウス', title: 'コレクション', subtitle: '部屋を選んでください', backBtn: '← 戻る', enterRoom: '入る →', footerCopy: 'ギャラリーツアー' }
+    en: { property: 'Petworth House · National Trust', title: 'The Collection', subtitle: 'Select a room to begin your tour', backBtn: '← All Rooms', enterRoom: 'Enter Room →', footerCopy: 'Petworth House Tour', listenBtn: 'Listen', stopBtn: 'Stop' },
+    fr: { property: 'Petworth House · National Trust', title: 'La Collection', subtitle: 'Sélectionnez une salle', backBtn: '← Retour', enterRoom: 'Entrer →', footerCopy: 'Visite Petworth', listenBtn: 'Écouter', stopBtn: 'Arrêter' },
+    de: { property: 'Petworth House', title: 'Die Sammlung', subtitle: 'Wählen Sie einen Raum', backBtn: '← Alle Räume', enterRoom: 'Eintreten →', footerCopy: 'Petworth Tour', listenBtn: 'Hören', stopBtn: 'Stopp' },
+    es: { property: 'Petworth House', title: 'La Colección', subtitle: 'Seleccione una sala', backBtn: '← Atrás', enterRoom: 'Entrar →', footerCopy: 'Tour Petworth', listenBtn: 'Escuchar', stopBtn: 'Detener' },
+    it: { property: 'Petworth House', title: 'La Collezione', subtitle: 'Seleziona una sala', backBtn: '← Indietro', enterRoom: 'Entra →', footerCopy: 'Tour Petworth', listenBtn: 'Ascolta', stopBtn: 'Ferma' },
+    zh: { property: 'Petworth House', title: '艺术收藏', subtitle: '选择一个展厅', backBtn: '← 返回', enterRoom: '进入 →', footerCopy: '互动画廊之旅', listenBtn: '收听', stopBtn: '停止' },
+    ja: { property: 'ペットワース・ハウス', title: 'コレクション', subtitle: '部屋を選んでください', backBtn: '← 戻る', enterRoom: '入る →', footerCopy: 'ギャラリーツアー', listenBtn: '聴く', stopBtn: '停止' }
 };
 
 const ROOMS = [
@@ -97,25 +100,64 @@ const ROOMS = [
       {
         type: 'paintings', artist: 'John Constable',
         works: [
-          { title: { en: 'Stonehenge' }, date: '1835', body: { en: 'A powerful depiction of the ancient monument.' }, img: 'https://i.guim.co.uk/img/media/34f6291ceb488a23c501b1fa3fc63c1cddab18a2/69_80_5015_3241/master/5015.jpg?width=620&dpr=2&s=none&crop=none' },
-          { title: { en: 'The Hay Wain' }, date: '1821', body: { en: 'An iconic English landscape.' }, img: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/John_Constable_-_The_Hay_Wain_%281821%29.jpg' },
-          { title: { en: 'The Cornfield' }, date: '1826', body: { en: 'A view near East Bergholt.' }, img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Constable_-_The_Cornfield.jpg/960px-Constable_-_The_Cornfield.jpg' }
+          { 
+            title: { en: 'Stonehenge' }, 
+            date: '1835', 
+            body: { en: 'A dramatic watercolour of the prehistoric stone circle under a sprawling, multitonal sky. The sky is the dominant force here—the double rainbow and the dark, sweeping washes of blue and grey make the ancient stones feel like part of a cosmic struggle between the earth and the elements. This work represents Constable\'s late-career shift toward the more visionary and moody side of Romanticism.' }, 
+            img: 'https://i.guim.co.uk/img/media/34f6291ceb488a23c501b1fa3fc63c1cddab18a2/69_80_5015_3241/master/5015.jpg?width=620&dpr=2&s=none&crop=none' 
+          },
+          { 
+            title: { en: 'The Hay Wain' }, 
+            date: '1821', 
+            body: { en: 'A large-scale oil painting depicting a wooden hay wagon being pulled across the River Stour. Constable used broken brushwork and "Constable\'s Snow" (flecks of white paint) to depict the movement of water and the shifting English sky. He aimed to immortalize the rural world he grew up in, and the painting\'s influence led to the surrounding area being heavily protected as an "Area of Outstanding Natural Beauty".' }, 
+            img: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/John_Constable_-_The_Hay_Wain_%281821%29.jpg' 
+          },
+          { 
+            title: { en: 'The Cornfield' }, 
+            date: '1826', 
+            body: { en: 'A detailed and atmospheric portrayal of rural English life. The painting shows a narrow path winding through a field of ripe corn, drawing the viewer into the scene. Constable\'s use of warm yellows and rich greens conveys the abundance of late summer, celebrating nature as familiar, intimate, and emotionally resonant rather than idealized or heroic.' }, 
+            img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Constable_-_The_Cornfield.jpg/960px-Constable_-_The_Cornfield.jpg' 
+          }
         ]
       },
       {
         type: 'paintings', artist: 'J.M.W Turner',
         works: [
-          { title: { en: 'Self Portrait' }, date: '1799', body: { en: 'The artist as a young man.' }, img: 'https://uploads1.wikiart.org/images/william-turner/self-portrait-1.jpg!Large.jpg' },
-          { title: { en: 'The Shipwreck' }, date: '1805', body: { en: 'Mastery of maritime drama.' }, img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Joseph_Mallord_William_Turner_-_The_Shipwreck_-_Google_Art_Project.jpg/960px-Joseph_Mallord_William_Turner_-_The_Shipwreck_-_Google_Art_Project.jpg' },
-          { title: { en: 'Rain, Steam and Speed' }, date: '1844', body: { en: 'The Great Western Railway.' }, img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Turner_-_Rain%2C_Steam_and_Speed_-_National_Gallery_file.jpg/960px-Turner_-_Rain%2C_Steam_and_Speed_-_National_Gallery_file.jpg' },
-          { title: { en: 'Snow Storm' }, date: '1842', body: { en: 'Steamboat off a Harbours Mouth.' }, img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Joseph_Mallord_William_Turner_-_Snow_Storm_-_Steam-Boat_off_a_Harbour%27s_Mouth_-_WGA23178.jpg/960px-Joseph_Mallord_William_Turner_-_Snow_Storm_-_Steam-Boat_off_a_Harbour%27s_Mouth_-_WGA23178.jpg' }
+          { 
+            title: { en: 'The Shipwreck' }, 
+            date: '1805', 
+            body: { en: 'Supposedly influenced by the poem "The Shipwreck" by William Falconer, Turner uses his specific technique of playing with light and shadow to create a dark and moody atmosphere. He chose to emphasize the power of nature using the Sublime to highlight the little control we have over the environment.' }, 
+            img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Joseph_Mallord_William_Turner_-_The_Shipwreck_-_Google_Art_Project.jpg/960px-Joseph_Mallord_William_Turner_-_The_Shipwreck_-_Google_Art_Project.jpg' 
+          },
+          { 
+            title: { en: 'Rain, Steam and Speed' }, 
+            date: '1844', 
+            body: { en: 'Turner sketched a train crossing the Maidenhead Railway Bridge to look at how contemporary phenomena interacted with the natural environment. He used a "vortex-like" style to highlight the speed of the train, while contrasting it with a boat and a horse-drawn plough to show the loss of human interaction with the land.' }, 
+            img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Turner_-_Rain%2C_Steam_and_Speed_-_National_Gallery_file.jpg/960px-Turner_-_Rain%2C_Steam_and_Speed_-_National_Gallery_file.jpg' 
+          },
+          { 
+            title: { en: 'Snow Storm' }, 
+            date: '1842', 
+            body: { en: 'One of Turner\'s more abstract paintings where he uses light and shadow to portray the battle between the modern and the natural. By displaying a steamboat against a blizzard, he showcased the fact that nature will always win in a battle against modernization.' }, 
+            img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Joseph_Mallord_William_Turner_-_Snow_Storm_-_Steam-Boat_off_a_Harbour%27s_Mouth_-_WGA23178.jpg/960px-Joseph_Mallord_William_Turner_-_Snow_Storm_-_Steam-Boat_off_a_Harbour%27s_Mouth_-_WGA23178.jpg' 
+          }
         ]
       },
       {
         type: 'paintings', artist: 'Caspar David Friedrich',
         works: [
-          { title: { en: 'The Abbey in the Oakwood' }, date: '1809', body: { en: 'A haunting cemetery scene.' }, img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Caspar_David_Friedrich_-_Abtei_im_Eichwald_-_Google_Art_Project.jpg/960px-Caspar_David_Friedrich_-_Abtei_im_Eichwald_-_Google_Art_Project.jpg' },
-          { title: { en: 'Wanderer above the Sea of Fog' }, date: '1818', body: { en: 'The pinnacle of Romanticism.' }, img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Caspar_David_Friedrich_-_Wanderer_above_the_Sea_of_Fog.jpeg/960px-Caspar_David_Friedrich_-_Wanderer_above_the_Sea_of_Fog.jpeg' }
+          { 
+            title: { en: 'The Abbey in the Oakwood' }, 
+            date: '1809', 
+            body: { en: 'An oil painting showing a procession of monks carrying a coffin towards the ruins of an abbey. It acts as a symbol for the impermanence of humanity and the decay of the man-made, placed next to old oak trees that symbolize the persistence of nature.' }, 
+            img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Caspar_David_Friedrich_-_Abtei_im_Eichwald_-_Google_Art_Project.jpg/960px-Caspar_David_Friedrich_-_Abtei_im_Eichwald_-_Google_Art_Project.jpg' 
+          },
+          { 
+            title: { en: 'Wanderer above the Sea of Fog' }, 
+            date: '1818', 
+            body: { en: 'Captures how humans relate to nature and the sublime. The figure acts as a Rückenfigur, encouraging the viewer to share his moment of reflection. Friedrich presents a quiet moment of humility and introspection facing the vast and mysterious natural world.' }, 
+            img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Caspar_David_Friedrich_-_Wanderer_above_the_Sea_of_Fog.jpeg/960px-Caspar_David_Friedrich_-_Wanderer_above_the_Sea_of_Fog.jpeg' 
+          }
         ]
       }
     ]
@@ -128,17 +170,35 @@ const ROOMS = [
       {
         type: 'paintings', artist: 'Claude Monet',
         works: [
-          { title: { en: 'Self Portrait' }, date: '1886', body: { en: 'Monet with a beret.' }, img: 'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcTbmdcjVdQ6rwEAWS5Fbar7Epw_HsFJXwx33Ja8PcZSpKBkRA' },
-          { title: { en: 'Impressions, Sunrise' }, date: '1872', body: { en: 'The dawn of a new movement.' }, img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTUcaazH4rZtSQzvrvxKw0_kAgiYbmMex9hclOLUvYlbb_o3w' },
-          { title: { en: 'The Cliff Walk at Pourville' }, date: '1882', body: { en: 'Luminous coastal light.' }, img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcS5P1aDtpgD6Eo-nN9ULHaXanYqUpA_bLdf1V2pIWQvFVAKXg' }
+          { 
+            title: { en: 'Impressions, Sunrise' }, 
+            date: '1872', 
+            body: { en: 'The work that gave the Impressionist movement its name. It captures a moment where the natural sunrise is partially obscured by industrial smoke, documenting the birth of the "atmospheric Anthropocene" where industry merges with the air we breathe.' }, 
+            img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTUcaazH4rZtSQzvrvxKw0_kAgiYbmMex9hclOLUvYlbb_o3w' 
+          },
+          { 
+            title: { en: 'The Cliff Walk at Pourville' }, 
+            date: '1882', 
+            body: { en: 'Depicts two women strolling along the dramatic coastline of Normandy. By celebrating the raw, atmospheric beauty of the French coast, Monet provides an early preservationist argument for protecting wild landscapes from encroaching industrial development.' }, 
+            img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcS5P1aDtpgD6Eo-nN9ULHaXanYqUpA_bLdf1V2pIWQvFVAKXg' 
+          }
         ]
       },
       {
         type: 'paintings', artist: 'Berthe Morisot',
         works: [
-          { title: { en: 'Self Portrait' }, date: '1885', body: { en: 'Portrait of the artist.' }, img: 'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcRC6-XZIrsvT_oZBfQdkGIKssfj03R2xKXaY0idybEdJ-zlvQ' },
-          { title: { en: 'Summers Day' }, date: '1879', body: { en: 'Two women in a boat.' }, img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSW0hD66KIALi7c3yFMkn7x6JKHvoB90iJlPzLmtPHOzGMmyQ' },
-          { title: { en: 'Hanging Laundry' }, date: '1875', body: { en: 'Capturing domestic life.' }, img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQFHJpHjushuCW9XeADuGbIoeYICVWM89MBZ4S0QhykBndqLg' }
+          { 
+            title: { en: 'Summers Day' }, 
+            date: '1879', 
+            body: { en: 'Two women in a boat on a lake in the Bois de Boulogne, a space recently transformed from wild woodland into a curated public park. Morisot highlights an era where nature was seen as a vital, restorative resource for the urban soul.' }, 
+            img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSW0hD66KIALi7c3yFMkn7x6JKHvoB90iJlPzLmtPHOzGMmyQ' 
+          },
+          { 
+            title: { en: 'Hanging Laundry' }, 
+            date: '1875', 
+            body: { en: 'A scene of a suburban garden where human labor exists in total harmony with the wind and sun. It serves as a gentle conservationist reminder of a pre-consumerist age where the energy for life was harvested directly from natural elements.' }, 
+            img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQFHJpHjushuCW9XeADuGbIoeYICVWM89MBZ4S0QhykBndqLg' 
+          }
         ]
       }
     ]
@@ -151,17 +211,35 @@ const ROOMS = [
       {
         type: 'paintings', artist: 'Van Gogh',
         works: [
-          { title: { en: 'Self Portrait with Bandaged Ear' }, date: '1889', body: { en: 'Iconic self-reflection.' }, img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQ2KTkB3D_b9c6usAgxTDPzFFuYOwZBnd7qEVuTKbHJa2iGkQ' },
-          { title: { en: 'Starry Night' }, date: '1889', body: { en: 'The view from Saint-Remy.' }, img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTLsW8EjWFYuZnyIAdA-y-rgSjEGTz15-ICkIPcnjubcWJQ6g' },
-          { title: { en: 'Landscape with Wheat' }, date: '1889', body: { en: 'Golden harvest textures.' }, img: 'https://krollermuller.nl/media/cache/collection_item_detail_small/media/collectionitempage/tmsImage/landschap-met-korenschelven-en-opkomende-maan-vincent-van-gogh-44550-copyright-kroller-muller-museum.jpg?500909865b6e' }
+          { 
+            title: { en: 'Starry Night' }, 
+            date: '1889', 
+            body: { en: 'The view from his window at the Saint-Paul-de-Mausole asylum. Swirling stars and imaginative, dreamy shapes provide a highly emotional and personal view of nature and the sky, showing beauty through a unique lens.' }, 
+            img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTLsW8EjWFYuZnyIAdA-y-rgSjEGTz15-ICkIPcnjubcWJQ6g' 
+          },
+          { 
+            title: { en: 'Landscape with Wheat' }, 
+            date: '1889', 
+            body: { en: 'Captures a field of wildflowers under a heavy, turbulent sky in Saint-Rémy. Van Gogh creates the idea of nature being a "dread-filled beauty," a self-reflection of personal feelings that fueled the foundations for modern environmentalism.' }, 
+            img: 'https://krollermuller.nl/media/cache/collection_item_detail_small/media/collectionitempage/tmsImage/landschap-met-korenschelven-en-opkomende-maan-vincent-van-gogh-44550-copyright-kroller-muller-museum.jpg?500909865b6e' 
+          }
         ]
       },
       {
         type: 'paintings', artist: 'Piet Mondrian',
         works: [
-          { title: { en: 'Self Portrait' }, date: '1918', body: { en: 'The artist looking forward.' }, img: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSABlZSE_QxsIfp8Jg0mPlSb60_Z0J8VnruXzjon_7jf4j-Lw' },
-          { title: { en: 'Wood with Beech Trees' }, date: '1888', body: { en: 'An early naturalistic study.' }, img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSxWyF6UlMkJV_pKCzmC6oVkpzhmW0bG6g54yEoxQQwtObgWQ' },
-          { title: { en: 'Row of 11 Poplars' }, date: '1908', body: { en: 'Early experiment with color.' }, img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQ9VCcqub4RrkmhmsWb0cYEeluueBuyZG7E3ajDcMtrD4DyWg' }
+          { 
+            title: { en: 'Wood with Beech Trees' }, 
+            date: '1888', 
+            body: { en: 'Moves away from traditional Dutch landscape depictions. The trees are shaped in distinct vertical lines, showing a more abstract rhythmic arrangement that focuses on structure and personal feeling over accuracy.' }, 
+            img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSxWyF6UlMkJV_pKCzmC6oVkpzhmW0bG6g54yEoxQQwtObgWQ' 
+          },
+          { 
+            title: { en: 'Row of 11 Poplars' }, 
+            date: '1908', 
+            body: { en: 'Uses bold, symbolic color as an expression of emotion and spiritual philosophy. This signifies a shift into depicting nature with clearer structures, exploring universal harmony through expressive lines.' }, 
+            img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQ9VCcqub4RrkmhmsWb0cYEeluueBuyZG7E3ajDcMtrD4DyWg' 
+          }
         ]
       }
     ]
@@ -172,19 +250,43 @@ const ROOMS = [
     previewImg: 'https://static.dezeen.com/uploads/2021/09/arc-de-triomphe-wrapped-christo-and-jeanne-claude_dezeen_2364_sq2.jpg',
     sections: [
       {
-        type: 'paintings', artist: 'Christo and Jean Claude',
+        type: 'paintings', artist: 'Christo and Jeanne-Claude',
         works: [
-          { title: { en: 'Arc de Triomphe Wrapped' }, date: '2021', body: { en: 'A temporary installation in Paris.' }, img: 'https://static.dezeen.com/uploads/2021/09/arc-de-triomphe-wrapped-christo-and-jeanne-claude_dezeen_2364_sq2.jpg' },
-          { title: { en: 'Wrapped Trees' }, date: '1998', body: { en: 'Transformation of the landscape.' }, img: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcTLxhHW1vVIHX-p2cX6HY0649rqg0oRBqyTwFPr31cEu34Mvw' },
-          { title: { en: 'Umbrellas' }, date: '1991', body: { en: 'Joint project in USA and Japan.' }, img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQUKeDqKO6htWUjES9d0DFeeD81AMJ90ejD2E6vocBZZg2U4Q' }
+          { 
+            title: { en: 'Arc de Triomphe Wrapped' }, 
+            date: '2021', 
+            body: { en: 'A temporary installation in Paris.' }, 
+            img: 'https://static.dezeen.com/uploads/2021/09/arc-de-triomphe-wrapped-christo-and-jeanne-claude_dezeen_2364_sq2.jpg' 
+          },
+          { 
+            title: { en: 'Wrapped Trees' }, 
+            date: '1998', 
+            body: { en: '178 trees shrouded in translucent woven polyester fabric. By "packaging" the trees like precious objects, the artists demand that we treat the natural world as a finite, fragile treasure that requires protective care.' }, 
+            img: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcTLxhHW1vVIHX-p2cX6HY0649rqg0oRBqyTwFPr31cEu34Mvw' 
+          },
+          { 
+            title: { en: 'Umbrellas' }, 
+            date: '1991', 
+            body: { en: 'A joint project in California and Japan. The yellow umbrellas symbolize dried, golden grasses, creating a monochromatic harmony that challenges capitalist views on art and establishes a legacy of financial independence.' }, 
+            img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQUKeDqKO6htWUjES9d0DFeeD81AMJ90ejD2E6vocBZZg2U4Q' 
+          }
         ]
       },
       {
         type: 'paintings', artist: 'Gerhard Richter',
         works: [
-          { title: { en: 'Self Portrait' }, date: '2017', body: { en: 'The artist in Prague.' }, img: 'https://upload.wikimedia.org/wikipedia/commons/7/7f/Gerhard_Richter%2C_Prague_%282017%29.jpg' },
-          { title: { en: 'Betty' }, date: '1988', body: { en: 'Photorealistic portrait.' }, img: 'https://www.guggenheim.org/wp-content/uploads/1998/01/GBM2001.3_ph_web-1.jpg' },
-          { title: { en: 'Seascape' }, date: '1998', body: { en: 'Atmospheric ocean study.' }, img: 'https://cdn.mos.cms.futurecdn.net/w7GDdWgRkKQdpiXBEqJ6Md-1800-80.jpg.webp' }
+          { 
+            title: { en: 'Seestuck (Betty)' }, 
+            date: '1988', 
+            body: { en: 'A turbulent seascape part of a series exploring the "perfection" of nature through photographic reproduction. Richter offers a conservationist critique of viewing the environment as an aesthetic backdrop rather than a living ecosystem.' }, 
+            img: 'https://www.guggenheim.org/wp-content/uploads/1998/01/GBM2001.3_ph_web-1.jpg' 
+          },
+          { 
+            title: { en: 'Seestuck' }, 
+            date: '1998', 
+            body: { en: 'A vast, desolate seascape where the horizon nearly disappears. Richter forces a conservationist reflection on the "alienation" of modern man from a natural world increasingly obscured by technological filters.' }, 
+            img: 'https://cdn.mos.cms.futurecdn.net/w7GDdWgRkKQdpiXBEqJ6Md-1800-80.jpg.webp' 
+          }
         ]
       }
     ]
@@ -197,17 +299,35 @@ const ROOMS = [
       {
         type: 'paintings', artist: 'Olafur Eliasson',
         works: [
-          { title: { en: 'Self Portrait' }, date: '2017', body: { en: 'The artist.' }, img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/%C3%93lafur_El%C3%ADasson_Internationale_Jury_Berlinale_2017_%28cropped%29.jpg/1280px-%C3%93lafur_El%C3%ADasson_Internationale_Jury_Berlinale_2017_%28cropped%29.jpg' },
-          { title: { en: 'Ice Watch' }, date: '2014', body: { en: 'Melting glacial ice blocks.' }, img: 'https://res.cloudinary.com/olafureliasson-net/image/private/q_auto:eco,c_fit,h_1920,w_1920/img/ice-watch_12842.webp' },
-          { title: { en: 'The Weather Project' }, date: '2003', body: { en: 'Artificial sun in the Turbine Hall.' }, img: 'https://res.cloudinary.com/olafureliasson-net/image/private/q_auto:eco,c_fit,h_1920,w_1920/img/the-weather-project_21881.webp' }
+          { 
+            title: { en: 'Ice Watch' }, 
+            date: '2014', 
+            body: { en: 'Massive blocks of glacial ice from Greenland arranged in a circular formation like a clock face. It symbolises how alien nature has become, signaling the lack of time humanity has to solve the climate crisis.' }, 
+            img: 'https://res.cloudinary.com/olafureliasson-net/image/private/q_auto:eco,c_fit,h_1920,w_1920/img/ice-watch_12842.webp' 
+          },
+          { 
+            title: { en: 'The Weather Project' }, 
+            date: '2003', 
+            body: { en: 'A massive, artificial sun in the Turbine Hall of the Tate Modern. By simulating a climate event in an industrial setting, Eliasson reminds us that the "weather" is a shared, global responsibility.' }, 
+            img: 'https://res.cloudinary.com/olafureliasson-net/image/private/q_auto:eco,c_fit,h_1920,w_1920/img/the-weather-project_21881.webp' 
+          }
         ]
       },
       {
         type: 'paintings', artist: 'Andreas Gursky',
         works: [
-          { title: { en: 'Self Portrait' }, date: '2022', body: { en: 'The artist.' }, img: 'https://i.guim.co.uk/img/media/ca2838884bed2a9fa5df5bd4d7781b29c513601a/0_0_2683_3351/master/2683.jpg?width=700&quality=85&auto=format&fit=max&s=db3f9a607319842babead94b7a0d6e90' },
-          { title: { en: 'Aletsch Glacier I' }, date: '1993', body: { en: 'Massive scale photography.' }, img: 'https://www.andreasgursky.com/media/pages/works/1993/aletschgletscher/15b3aec03d-1762789695/1993_aletschgletscher-1800x1800-q75.jpg' },
-          { title: { en: 'Aletsch Glacier II' }, date: '2023', body: { en: 'Glacial landscape study.' }, img: 'https://www.andreasgursky.com/media/pages/works/2023/aletsch-glacier-ii/fbeb429eda-1762792440/2023_aletschgletscher_ii-1800x1800-q75.jpg' }
+          { 
+            title: { en: 'Aletsch Glacier I' }, 
+            date: '1993', 
+            body: { en: 'Documents the glacier as a symbol of "Deep Time" in its full magnitude. It provides a vital baseline for realizing that even "eternal" natural structures are vulnerable to the invisible reach of human industry.' }, 
+            img: 'https://www.andreasgursky.com/media/pages/works/1993/aletschgletscher/15b3aec03d-1762789695/1993_aletschgletscher-1800x1800-q75.jpg' 
+          },
+          { 
+            title: { en: 'Aletsch Glacier II' }, 
+            date: '2024', 
+            body: { en: 'Revisited three decades later, revealing the dramatic retreat of the ice. This work serves as forensic proof of decline and geological loss occurring within a single human generation.' }, 
+            img: 'https://www.andreasgursky.com/media/pages/works/2023/aletsch-glacier-ii/fbeb429eda-1762792440/2023_aletschgletscher_ii-1800x1800-q75.jpg' 
+          }
         ]
       }
     ]
@@ -220,9 +340,24 @@ const ROOMS = [
       {
         type: 'paintings', artist: 'Claude Monet',
         works: [
-          { title: { en: 'Monet\'s Garden at Giverny' }, date: '1900', body: { en: 'Floral explosion of purple.' }, img: 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Monet_-_Monets_Garten_in_Giverny.jpg' },
-          { title: { en: 'Pathway in Monets Garden' }, date: '1902', body: { en: 'Dappled light on a garden path.' }, img: 'https://uploads0.wikiart.org/00258/images/claude-monet/pathway-in-monets-garden-at-giverny-1901.jpeg!Large.jpeg' },
-          { title: { en: 'Water Lily Pond' }, date: '1899', body: { en: 'The famous Japanese bridge.' }, img: 'https://collectionapi.metmuseum.org/api/collection/v1/iiif/437127/2331256/restricted' }
+          { 
+            title: { en: 'Monet\'s Garden at Giverny' }, 
+            date: '1900', 
+            body: { en: 'A lush pathway of blooming purple irises. It serves as a testament to the restorative power of biodiversity, proving that even a man-made ecosystem can become a vital refuge for the human spirit.' }, 
+            img: 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Monet_-_Monets_Garten_in_Giverny.jpg' 
+          },
+          { 
+            title: { en: 'Pathway in Monets Garden' }, 
+            date: '1902', 
+            body: { en: 'A sun-drenched path lined with climbing roses. By celebrating a landscape where human design is secondary to plant growth, Monet offers a conservationist lesson on letting nature take the lead.' }, 
+            img: 'https://uploads0.wikiart.org/00258/images/claude-monet/pathway-in-monets-garden-at-giverny-1901.jpeg!Large.jpeg' 
+          },
+          { 
+            title: { en: 'Water Lily Pond' }, 
+            date: '1899', 
+            body: { en: 'His famous Japanese-style bridge over a serene pond. Monet creates a timeless icon, urging us to protect the quiet, fragile wetlands that sustain both nature and our own peace of mind.' }, 
+            img: 'https://collectionapi.metmuseum.org/api/collection/v1/iiif/437127/2331256/restricted' 
+          }
         ]
       }
     ]
@@ -250,6 +385,7 @@ function renderLangSelectors() {
 
 function setLanguage(lang, event) {
     currentLang = lang;
+    stopNarration();
     document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
     event.target.classList.add('active');
     updateText();
@@ -312,6 +448,7 @@ function renderRoom(roomId) {
 }
 
 function goToLobby() {
+    stopNarration();
     currentRoomId = null;
     document.getElementById('screen-room').classList.remove('active');
     document.getElementById('screen-lobby').classList.add('active');
@@ -342,9 +479,54 @@ function hideTooltip() {
     document.getElementById('tooltip').classList.remove('visible');
 }
 
+function toggleNarration() {
+    if (isNarrating) {
+        stopNarration();
+    } else {
+        startNarration();
+    }
+}
+
+function startNarration() {
+    const room = ROOMS.find(r => r.id === currentRoomId);
+    if (!room) return;
+
+    isNarrating = true;
+    const btn = document.getElementById('audio-toggle');
+    btn.innerText = i18n[currentLang].stopBtn;
+    btn.style.background = "rgba(201, 168, 76, 0.3)";
+
+    let script = [];
+    script.push(room.name[currentLang] || room.name['en']);
+
+    room.sections.forEach(section => {
+        script.push(`Works by ${section.artist}.`);
+        section.works.forEach(work => {
+            script.push(`${work.title[currentLang] || work.title['en']}, painted in ${work.date}.`);
+            script.push(work.body[currentLang] || work.body['en']);
+        });
+    });
+
+    const fullText = script.join(' ');
+    const utterance = new SpeechSynthesisUtterance(fullText);
+    utterance.lang = currentLang;
+    utterance.onend = stopNarration;
+    
+    window.speechSynthesis.speak(utterance);
+}
+
+function stopNarration() {
+    window.speechSynthesis.cancel();
+    isNarrating = false;
+    const btn = document.getElementById('audio-toggle');
+    if (btn) {
+        btn.innerText = i18n[currentLang].listenBtn;
+        btn.style.background = "rgba(201, 168, 76, 0.1)";
+    }
+}
+
 init();
 </script>
 
 </body>
 </html>
-
